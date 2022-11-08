@@ -1,8 +1,8 @@
 import csv
-import os
 import re
-from datetime import datetime
-from os import path
+from datetime import datetime, timedelta
+from os import makedirs
+from os.path import exists
 from pathlib import Path
 
 import requests
@@ -35,7 +35,10 @@ class DownloadService(BaseService):
                     dt = datetime.strptime(currdate, '%m/%d/%Y')
                     dateStr = dt.strftime('%Y-%m-%d')
                     today = datetime.today()
-                    if (today.strftime('%Y-%m-%d') != dateStr):
+                    folderpath = '{0}/{1}'.format(self.srcHomePath, dateStr)
+                    filepath = '{0}/{1}.csv'.format(folderpath, fundnm)
+                    # today.strftime('%Y-%m-%d') != dateStr):
+                    if today >= dt + timedelta(days=1) and exists(folderpath) and exists(filepath):
                         print("no download since date mismatch!")
                         return False
                 else:
@@ -52,14 +55,12 @@ class DownloadService(BaseService):
                         row = [s.strip('"') for s in tmprow]
                         data.append(row)
 
-                folderpath = '{0}/ark/{1}'.format(Path.home(), dateStr)
-                if not path.exists(folderpath):
-                    os.makedirs(folderpath)
+                folderpath = '{0}/{1}'.format(self.srcHomePath, dateStr)
+                if not exists(folderpath):
+                    makedirs(folderpath)
                 filepath = '{0}/{1}.csv'.format(folderpath, fundnm)
                 with open(filepath, 'w', encoding='UTF8') as f:
-                    # create the csv writer
                     writer = csv.writer(f)
-                    # write a row to the csv file
                     writer.writerow(header)
                     writer.writerows(data)
             return True

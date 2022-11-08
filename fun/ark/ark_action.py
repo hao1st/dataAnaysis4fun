@@ -4,7 +4,7 @@ from os.path import exists, isdir, isfile, join
 from pathlib import Path
 
 class BaseService:
-    srcHomePath = '{0}/ark'.format(Path.home())
+    srcHomePath = '{0}/stock/ark'.format(Path.home())
     def __init__(self, fromDate = None, toDate = None):
         todayStr = datetime.today().strftime('%Y-%m-%d')
         self.fromDate = fromDate
